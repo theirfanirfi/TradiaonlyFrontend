@@ -39,14 +39,15 @@ const UploadProgressDialog = ({
   };
 
   const getStatusTitle = () => {
-    switch (status) {
-      case "success":
-        return "Upload Complete!";
-      case "error":
-        return "Upload Failed";
-      default:
-        return "Uploading Files...";
-    }
+    // switch (status) {
+    //   case "CREATED":
+    //     return "UPloading files";
+    //   case "Extracting":
+    //     return "Upload Failed";
+    //   default:
+    //     return "Uploading Files...";
+    // }
+    return status;
   };
 
   return (

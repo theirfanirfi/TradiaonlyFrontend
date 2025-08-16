@@ -52,6 +52,11 @@ function Process() {
     async (files, onProgress) => {
       return await DocumentsAPI.upload(processId, files, onProgress);
     },
+    // Check invoice status function
+    async () => {
+      return await ProcessAPI.status(processId);
+    }
+    ,
     {
       simulate: false, // Using real API now
       onSuccess: (files) => {
@@ -62,7 +67,7 @@ function Process() {
         console.error("Upload failed:", error);
         // You can add user notification here (toast, alert, etc.)
       },
-      autoHideDelay: 3000,
+      autoHideDelay: 0,
     }
   );
 

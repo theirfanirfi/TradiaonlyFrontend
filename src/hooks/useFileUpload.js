@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const useFileUpload = (uploadFunction, options = {}) => {
+const useFileUpload = (uploadFunction,checkInvoiceStatus, options = {}) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -13,29 +13,8 @@ const useFileUpload = (uploadFunction, options = {}) => {
     onError,
     onProgress,
     simulate = false,
-    autoHideDelay = 3000,
+    autoHideDelay = 0,
   } = options;
-
-  const simulateUpload = async (files) => {
-    setTotalFiles(files.length);
-    setUploadedCount(0);
-    setUploadProgress(0);
-
-    for (let i = 0; i < files.length; i++) {
-      // Simulate file upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      
-      const currentCount = i + 1;
-      const currentProgress = (currentCount / files.length) * 100;
-      
-      setUploadedCount(currentCount);
-      setUploadProgress(currentProgress);
-      
-      if (onProgress) {
-        onProgress(currentProgress, currentCount, files.length);
-      }
-    }
-  };
 
   const startUpload = async (files) => {
     if (!files || files.length === 0) return;
@@ -48,35 +27,68 @@ const useFileUpload = (uploadFunction, options = {}) => {
     setTotalFiles(files.length);
 
     try {
-      if (simulate) {
-        await simulateUpload(files);
-      } else {
         // Real upload using the provided upload function
         const result = await uploadFunction(files, (progress) => {
-          setUploadProgress(progress);
+          // setUploadProgress(progress);
           // For single batch upload, we show progress but don't track individual files
           // The uploaded count will be set to total when complete
-          if (onProgress) {
-            onProgress(progress, progress === 100 ? files.length : 0, files.length);
-          }
+          // if (onProgress) {
+          //   onProgress(progress, progress === 100 ? files.length : 0, files.length);
+          // }
         });
-        
-        // Set uploaded count to total when complete
-        setUploadedCount(files.length);
-        setUploadProgress(100);
-      }
 
-      setUploadStatus("success");
-      if (onSuccess) {
-        onSuccess(files);
-      }
-
-      // Auto-hide after delay
-      if (autoHideDelay > 0) {
-        setTimeout(() => {
+        //after each 10 seconds, check the invoice status
+        const interval = setInterval(async () => {
+          const processStatus = await checkInvoiceStatus();
+          console.log("Current invoice status:", processStatus);
+          if (processStatus.status === "Done") {
+            clearInterval(interval);
+            setIsUploading(false);
+            setUploadStatus(processStatus.status);
+            setUploadedCount(files.length);
+            setUploadProgress(100);
+            onSuccess(files);
+            reset();
+          }else if (processStatus.status === "Created") {
+          
+          setUploadStatus(processStatus.status);
+          setUploadProgress(10);
+          }
+          
+          else if (processStatus.status === "Extracting") {
+          
+          setUploadStatus(processStatus.status);
+          setUploadProgress(30);
+          }else if (processStatus.status === "Understanding") {
+          setUploadStatus(processStatus.status);
+          setUploadProgress(60);
+          }else if (processStatus.status === "Generating") {
+          setUploadStatus(processStatus.status);
+          setUploadProgress(80);
+          }else {
+          setUploadStatus("error");
+          clearInterval(interval);
           reset();
-        }, autoHideDelay);
-      }
+        }
+        }, 10000); // Check every 10 seconds
+        
+      //   // Set uploaded count to total when complete
+      //   setUploadedCount(files.length);
+      //   setUploadProgress(100);
+      
+
+      // setUploadStatus("success");
+      
+      // if (onSuccess) {
+      //   onSuccess(files);
+      // }
+
+      // // Auto-hide after delay
+      // if (autoHideDelay > 0) {
+      //   setTimeout(() => {
+      //     reset();
+      //   }, autoHideDelay);
+      // }
     } catch (err) {
       console.error("Upload error:", err);
       setUploadStatus("error");
