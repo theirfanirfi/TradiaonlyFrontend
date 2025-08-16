@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { Link } from "react-router-dom";
 
 const ProcessTable = ({ theme, processes, onDeleteProcess }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -141,13 +142,16 @@ const ProcessTable = ({ theme, processes, onDeleteProcess }) => {
                 >
                   {process.process_id}
                 </TableCell>
+
                 <TableCell
                   sx={{
                     color: theme.palette.text.primary,
                     fontWeight: "400",
                   }}
                 >
+                  <Link to={`/processes/${process.process_id}`} style={{ textDecoration: 'none', color: theme.palette.primary.main }}>
                   {process.process_name}
+                  </Link>
                 </TableCell>
                 <TableCell align="center">
                   <Tooltip title="Delete Process" arrow>

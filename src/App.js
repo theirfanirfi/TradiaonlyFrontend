@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainPage from './Pages/MainPage'; // Example
 import ChatPage from './Pages/ChatPage'; // Example
+import Processes from './Pages/Processes';
 import Process from './Pages/Process';
 
 function App() {
@@ -38,7 +39,8 @@ function App() {
       <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/main" element={<MainPage />} />
-          <Route path="/process" element={<Process />} />
+          <Route path="/processes" element={<Processes />} />
+          <Route path="/processes/:processId?" element={<Process />} />
           <Route path="/main/:chatId?" element={<MainPage />} />
           <Route path="/chat/:chatId?" element={<ChatPage />} />
         </Routes>

@@ -1,4 +1,3 @@
-// ProcessList.js
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -8,23 +7,17 @@ import {
   Typography,
   Container,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createAppTheme } from "../theme/theme";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
-import ProcessTable from "../components/ProcessTable";
-import AddProcessForm from "../components/AddProcessForm";
+import InvoiceList from "../components/InvoiceList";
+import UploadModal from "../components/UploadModal";
+import UploadProgressDialog from "../components/UploadProgressDialog";
+import UploadButton from "../components/UploadButton";
+import useFileUpload from "../hooks/useFileUpload";
 import { chatHistoryData } from "../data/chatHistory";
-import { ProcessAPI } from "../lib/api";
-
-// Mock initial data
-const initialProcesses = [
-  { process_id: 1, process_name: "Data Processing Pipeline" },
-  { process_id: 2, process_name: "User Authentication" },
-  { process_id: 3, process_name: "Email Notification Service" },
-  { process_id: 4, process_name: "Payment Processing" },
-  { process_id: 5, process_name: "Report Generation" },
-];
+import { ProcessAPI, DocumentsAPI } from "../lib/api";
 
 function Process() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -35,25 +28,114 @@ function Process() {
   });
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [processes, setProcesses] = useState(initialProcesses);
-  const [nextId, setNextId] = useState(6);
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [processName, setProcessName] = useState("");
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   const navigate = useNavigate();
+  const { processId } = useParams();
   const theme = createAppTheme(darkMode ? "dark" : "light");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-const fetch_processes = async () => {
-    let response = await ProcessAPI.list()
-    console.log(response)
-    if(response.total > 0){
-        setProcesses(response.processes)
+  // Upload functionality using the custom hook
+  const {
+    isUploading,
+    uploadProgress,
+    uploadStatus,
+    uploadedCount,
+    totalFiles,
+    startUpload,
+    reset: resetUpload,
+  } = useFileUpload(
+    // Real upload function using DocumentsAPI
+    async (files, onProgress) => {
+      return await DocumentsAPI.upload(processId, files, onProgress);
+    },
+    {
+      simulate: false, // Using real API now
+      onSuccess: (files) => {
+        console.log(`Successfully uploaded ${files.length} files`);
+        fetchInvoices(); // Refresh invoices after successful upload
+      },
+      onError: (error) => {
+        console.error("Upload failed:", error);
+        // You can add user notification here (toast, alert, etc.)
+      },
+      autoHideDelay: 3000,
     }
-    
-  }
+  );
 
-  useEffect(()=>{
-    fetch_processes();
-  },[])
+  const mockeINvoices = [
+    {
+      id: 1,
+      doc_no: "SHBNE250400002",
+      bl_no: "AHG02331130P08",
+      total_weight: "237.00 kg",
+      total_price: "$0.00",
+      items_count: 1,
+      status: "verified",
+      created_date: "2024-01-15"
+    },
+    {
+      id: 2,
+      doc_no: "SHBNE250400003",
+      bl_no: "AHG02331130P09",
+      total_weight: "0.00 kg",
+      total_price: "$1100.00",
+      items_count: 1,
+      status: "unverified",
+      created_date: "2024-01-16"
+    },
+    {
+      id: 3,
+      doc_no: "SHBNE250400004",
+      bl_no: "AHG02331130P10",
+      total_weight: "0.00 kg",
+      total_price: "$0.00",
+      items_count: 1,
+      status: "verified",
+      created_date: "2024-01-17"
+    }
+  ];
+
+  const fetchInvoices = async () => {
+    try {
+      setLoading(true);
+      const response = await DocumentsAPI.list(processId);
+      console.log('Documents response:', response);
+      
+      if (response && response.documents && response.documents.length > 0) {
+        setInvoices(response.documents);
+      } else {
+        // If no documents returned, show mock data
+        setInvoices(mockeINvoices);
+      }
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+      // Fallback to mock data on error
+      setInvoices(mockeINvoices);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProcessDetails = async () => {
+    try {
+      const response = await ProcessAPI.getById(processId);
+      setProcessName(response.process_name || `Process ${processId}`);
+    } catch (error) {
+      console.error("Error fetching process details:", error);
+      setProcessName(`Import/Export Process ${processId}`);
+    }
+  };
+
+  useEffect(() => {
+    if (processId) {
+      fetchInvoices();
+      fetchProcessDetails();
+    }
+  }, [processId]);
 
   const handleThemeToggle = () => {
     const newMode = !darkMode;
@@ -78,17 +160,21 @@ const fetch_processes = async () => {
     navigate(`/chat/${chatId}`);
   };
 
-  const handleAddProcess = (processName) => {
-    const newProcess = {
-      process_id: nextId,
-      process_name: processName,
-    };
-    setProcesses([...processes, newProcess]);
-    setNextId(nextId + 1);
+  const handleInvoiceClick = (invoiceId) => {
+    navigate(`/process/${processId}/invoice/${invoiceId}`);
   };
 
-  const handleDeleteProcess = (processId) => {
-    setProcesses(processes.filter((process) => process.process_id !== processId));
+  const handleUploadClick = () => {
+    setUploadModalOpen(true);
+  };
+
+  const handleUploadModalClose = () => {
+    setUploadModalOpen(false);
+  };
+
+  const handleFilesUpload = async (files) => {
+    setUploadModalOpen(false);
+    await startUpload(files);
   };
 
   return (
@@ -110,7 +196,7 @@ const fetch_processes = async () => {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: theme.palette.background.default,
+            backgroundColor: "#ffffff",
           }}
         >
           <TopBar
@@ -128,30 +214,66 @@ const fetch_processes = async () => {
               flex: 1,
               py: 3,
               overflow: "auto",
+              backgroundColor: "#ffffff",
             }}
           >
-            <Typography
-              variant="h4"
+            <Box
               sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
                 mb: 4,
-                fontWeight: "bold",
-                color: theme.palette.text.primary,
               }}
             >
-             Import/Export Processes
-            </Typography>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: "bold",
+                  color: "#000000",
+                }}
+              >
+                {processName}
+              </Typography>
 
-            <Box sx={{ mb: 4 }}>
-              <AddProcessForm theme={theme} onAddProcess={handleAddProcess} />
+              <UploadButton
+                onClick={handleUploadClick}
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.dark,
+                  },
+                }}
+              >
+                Upload Invoices
+              </UploadButton>
             </Box>
 
-            <ProcessTable
-              theme={theme}
-              processes={processes}
-              onDeleteProcess={handleDeleteProcess}
+            <InvoiceList
+              invoices={invoices}
+              loading={loading}
+              onInvoiceClick={handleInvoiceClick}
             />
           </Container>
         </Box>
+
+        {/* Upload Modal */}
+        <UploadModal
+          open={uploadModalOpen}
+          onClose={handleUploadModalClose}
+          onUpload={handleFilesUpload}
+          title="Upload Invoices"
+          acceptedFileTypes=".pdf,.jpg,.jpeg,.png,.xlsx,.xls"
+        />
+
+        {/* Upload Progress Dialog */}
+        <UploadProgressDialog
+          open={isUploading}
+          progress={uploadProgress}
+          status={uploadStatus}
+          uploadedCount={uploadedCount}
+          totalFiles={totalFiles}
+          onClose={resetUpload}
+        />
       </Box>
     </ThemeProvider>
   );
