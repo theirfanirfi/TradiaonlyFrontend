@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://3.27.231.129:8000";
 
 const api = axios.create({
   baseURL: apiBaseUrl,
@@ -26,7 +26,12 @@ const ProcessAPI = {
     return data;
   },
   async create(payload) {
-    const { data } = await api.post("/api/process/create", payload);
+    const formData = new FormData();
+    formData.append("name", payload.process_name);
+    formData.append("declaration_type", payload.declaration_type);
+    const { data } = await api.post("/api/process/create", formData, {
+      headers: { "Content-Type": "application/json" }
+      }) ;
     return data;
   },
   async get(processId) {

@@ -79,13 +79,16 @@ const fetch_processes = async () => {
     navigate(`/chat/${chatId}`);
   };
 
-  const handleAddProcess = (processName) => {
+  const handleAddProcess = async (processName, declarationType) => {
     const newProcess = {
-      process_id: nextId,
       process_name: processName,
+      declaration_type: declarationType,
     };
-    setProcesses([...processes, newProcess]);
-    setNextId(nextId + 1);
+
+    let response = await ProcessAPI.create(newProcess);
+    if (response) {
+      setProcesses([...processes, response]);
+    }
   };
 
   const handleDeleteProcess = (processId) => {

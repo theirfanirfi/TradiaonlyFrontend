@@ -8,6 +8,10 @@ import {
   Box,
   Alert,
   Snackbar,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -16,6 +20,11 @@ const AddProcessForm = ({ theme, onAddProcess }) => {
   const [processName, setProcessName] = useState("");
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("import");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
 
 
 
@@ -42,7 +51,7 @@ const AddProcessForm = ({ theme, onAddProcess }) => {
     setError("");
 
     // Add the process
-    onAddProcess(processName.trim());
+    onAddProcess(processName.trim(), selectedValue);
 
     // Reset form
     setProcessName("");
@@ -132,6 +141,21 @@ const AddProcessForm = ({ theme, onAddProcess }) => {
               placeholder="e.g., User Registration Process"
               autoComplete="off"
             />
+
+    <FormControl fullWidth>
+      <InputLabel id="my-select-label">Type</InputLabel>
+      <Select
+        labelId="my-select-label"
+        id="my-select"
+        value={selectedValue}
+        label="Type"
+        onChange={handleChange}
+      >
+        <MenuItem value={'import'}>Import</MenuItem>
+        <MenuItem value={'export'}>Export</MenuItem>
+      </Select>
+    </FormControl>
+
             <Button
               type="submit"
               variant="contained"
