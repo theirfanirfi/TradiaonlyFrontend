@@ -37,6 +37,7 @@ function Process() {
   const { processId } = useParams();
   const theme = createAppTheme(darkMode ? "dark" : "light");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [process, setProcess] = useState(null);
 
   // Upload functionality using the custom hook
   const {
@@ -112,14 +113,15 @@ function Process() {
       
       if (response && response.documents && response.documents.length > 0) {
         setInvoices(response.documents);
+        setProcess(response.process);
       } else {
         // If no documents returned, show mock data
-        setInvoices(mockeINvoices);
+        // setInvoices(mockeINvoices);
       }
     } catch (error) {
       console.error("Error fetching invoices:", error);
       // Fallback to mock data on error
-      setInvoices(mockeINvoices);
+      // setInvoices(mockeINvoices);
     } finally {
       setLoading(false);
     }
@@ -256,6 +258,7 @@ function Process() {
             <InvoiceList
               invoices={invoices}
               loading={loading}
+              process={process}
               onInvoiceClick={handleInvoiceClick}
             />
           </Container>
