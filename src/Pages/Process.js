@@ -72,38 +72,6 @@ function Process() {
     }
   );
 
-  const mockeINvoices = [
-    {
-      id: 1,
-      doc_no: "SHBNE250400002",
-      bl_no: "AHG02331130P08",
-      total_weight: "237.00 kg",
-      total_price: "$0.00",
-      items_count: 1,
-      status: "verified",
-      created_date: "2024-01-15"
-    },
-    {
-      id: 2,
-      doc_no: "SHBNE250400003",
-      bl_no: "AHG02331130P09",
-      total_weight: "0.00 kg",
-      total_price: "$1100.00",
-      items_count: 1,
-      status: "unverified",
-      created_date: "2024-01-16"
-    },
-    {
-      id: 3,
-      doc_no: "SHBNE250400004",
-      bl_no: "AHG02331130P10",
-      total_weight: "0.00 kg",
-      total_price: "$0.00",
-      items_count: 1,
-      status: "verified",
-      created_date: "2024-01-17"
-    }
-  ];
 
   const fetchInvoices = async () => {
     try {

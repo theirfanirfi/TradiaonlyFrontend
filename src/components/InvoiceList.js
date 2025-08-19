@@ -38,7 +38,7 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
   }
 
   // Show document table if process status is not "Done"
-  if (process?.status == "Done") {
+  if (process?.status != "Done") {
     return (
       <TableContainer
         component={Paper}
@@ -295,7 +295,12 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
           </TableRow>
         </TableHead>
         <TableBody>
-          {invoices.map((invoice, index) => (
+          {invoices.map((invoice, index) => {
+            
+            let items = invoice.llm_response || [];
+            console.log("Invoice Items:", items.items);
+            
+            return (
             <TableRow
               key={invoice.id}
               onClick={() => onInvoiceClick(invoice.id)}
@@ -332,7 +337,7 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                           fontSize: "13px",
                         }}
                       >
-                        GRAPPLE YT250305-07 HYDRAULIC ROTATOR
+                        {invoice.document_name}
                       </Typography>
                     </Box>
                     <Typography
@@ -447,10 +452,10 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                 </Box>
               </TableCell>
               <TableCell sx={{ color: "#000000", textAlign: "center", fontWeight: "500" }}>
-                {invoice.total_price}
+                {invoice.llm_response.total_price}
               </TableCell>
               <TableCell sx={{ color: "#000000", textAlign: "center", fontWeight: "500" }}>
-                {invoice.total_weight}
+                {invoice.llm_response.total_weight}
               </TableCell>
               <TableCell sx={{ textAlign: "center" }}>
                 <Chip
@@ -515,7 +520,7 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                 </Box>
               </TableCell>
             </TableRow>
-          ))}
+          )})}
         </TableBody>
       </Table>
       <Box
