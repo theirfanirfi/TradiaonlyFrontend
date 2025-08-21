@@ -302,8 +302,8 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
             
             return (
             <TableRow
-              key={invoice.id}
-              onClick={() => onInvoiceClick(invoice.id)}
+              key={invoice.document_id}
+              onClick={() => onInvoiceClick(invoice.document_id)}
               sx={{
                 backgroundColor: "#ffffff",
                 "&:nth-of-type(odd)": {

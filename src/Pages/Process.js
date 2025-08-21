@@ -136,7 +136,7 @@ function Process() {
   };
 
   const handleInvoiceClick = (invoiceId) => {
-    navigate(`/process/${processId}/invoice/${invoiceId}`);
+    navigate(`/processes/${processId}/invoice/${invoiceId}`);
   };
 
   const handleUploadClick = () => {

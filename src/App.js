@@ -7,6 +7,7 @@ import MainPage from './Pages/MainPage'; // Example
 import ChatPage from './Pages/ChatPage'; // Example
 import Processes from './Pages/Processes';
 import Process from './Pages/Process';
+import InvoiceDetail from './Pages/InvoiceDetail';
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -41,6 +42,7 @@ function App() {
           <Route path="/main" element={<MainPage />} />
           <Route path="/processes" element={<Processes />} />
           <Route path="/processes/:processId?" element={<Process />} />
+          <Route path="/processes/:processId?/invoice/:invoiceId?" element={<InvoiceDetail />} />
           <Route path="/main/:chatId?" element={<MainPage />} />
           <Route path="/chat/:chatId?" element={<ChatPage />} />
         </Routes>

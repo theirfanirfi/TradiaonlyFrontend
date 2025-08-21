@@ -24,7 +24,7 @@ import { createAppTheme } from "../theme/theme";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import { chatHistoryData } from "../data/chatHistory";
-import { InvoiceAPI } from "../lib/api";
+import { DocumentsAPI } from "../lib/api";
 
 function InvoiceDetail() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -43,6 +43,7 @@ function InvoiceDetail() {
 
   const navigate = useNavigate();
   const { processId, invoiceId } = useParams();
+  console.log("Process ID:", processId, "Invoice ID:", invoiceId);
   const theme = createAppTheme(darkMode ? "dark" : "light");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -50,7 +51,7 @@ function InvoiceDetail() {
     try {
       setLoading(true);
       // Replace with actual API call
-      const response = await InvoiceAPI.getDetails(invoiceId);
+      const response = await DocumentsAPI.get_invoice_items(invoiceId);
       setInvoiceData(response);
     } catch (error) {
       console.error("Error fetching invoice details:", error);

@@ -68,6 +68,12 @@ const DocumentsAPI = {
     const { data } = await api.delete(`/api/documents/${documentId}`);
     return data;
   },
+
+  async get_invoice_items(invoice){
+    const { data } = await api.get(`/api/documents/${invoice}/items`);
+    console.log('invoice items', data.document);
+    return data;
+  }
 };
 
 const ItemsAPI = {
