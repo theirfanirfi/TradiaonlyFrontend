@@ -69,11 +69,25 @@ const DocumentsAPI = {
     return data;
   },
 
-  async get_invoice_items(invoice){
-    const { data } = await api.get(`/api/documents/${invoice}/items`);
-    console.log('invoice items', data.document);
+  async get_invoice_items(invoiceId){
+    const { data } = await api.get(`/api/documents/${invoiceId}/items`);
+    console.log('invoice items', data);
     return data;
-  }
+  },
+
+  async get_invoice_pdf(invoiceId){
+    const { data } = await api.get(`/api/documents/${invoiceId}/pdf`, {
+      responseType: "blob",
+    });
+    
+    return new Blob([data], { type: "application/pdf" });
+  },
+
+  async retry_document_extraction(documentId) {
+    const { data } = await api.post(`/api/documents/retry-item-extraction/${documentId}`, {});  
+    console.log('retry document extraction data', data);
+    return data;
+  },
 };
 
 const ItemsAPI = {

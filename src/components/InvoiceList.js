@@ -452,10 +452,10 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                 </Box>
               </TableCell>
               <TableCell sx={{ color: "#000000", textAlign: "center", fontWeight: "500" }}>
-                {invoice.llm_response.total_price}
+                {invoice?.llm_response?.total_price}
               </TableCell>
               <TableCell sx={{ color: "#000000", textAlign: "center", fontWeight: "500" }}>
-                {invoice.llm_response.total_weight}
+                {invoice?.llm_response?.total_weight}
               </TableCell>
               <TableCell sx={{ textAlign: "center" }}>
                 <Chip
@@ -523,32 +523,6 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
           )})}
         </TableBody>
       </Table>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          p: 2,
-          borderTop: "1px solid #e0e0e0",
-          backgroundColor: "#f8f9fa",
-        }}
-      >
-        <Button
-          variant="outlined"
-          size="small"
-          sx={{
-            textTransform: "none",
-            fontSize: "14px",
-            borderColor: "#cccccc",
-            color: "#666666",
-            "&:hover": {
-              borderColor: "#999999",
-            },
-          }}
-        >
-          + Add Item
-        </Button>
-      </Box>
     </TableContainer>
   );
 };

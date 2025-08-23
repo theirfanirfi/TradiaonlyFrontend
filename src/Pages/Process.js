@@ -97,7 +97,8 @@ function Process() {
 
   const fetchProcessDetails = async () => {
     try {
-      const response = await ProcessAPI.getById(processId);
+      const response = await ProcessAPI.get(processId);
+      console.log('fetchProcessDetails response:', response);
       setProcessName(response.process_name || `Process ${processId}`);
     } catch (error) {
       console.error("Error fetching process details:", error);
