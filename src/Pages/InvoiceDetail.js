@@ -24,7 +24,7 @@ import { createAppTheme } from "../theme/theme";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import { chatHistoryData } from "../data/chatHistory";
-import { DocumentsAPI } from "../lib/api";
+import { DocumentsAPI, ItemsAPI } from "../lib/api";
 import { set } from "zod";
 
 function InvoiceDetail() {
@@ -172,9 +172,28 @@ function InvoiceDetail() {
                   <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
                    {`Item `+(index+1)}: {item.item_title}
                   </Typography>
-                  {/* <Typography variant="caption" sx={{ color: "#666666", display: "block", mt: 1 }}>
-                   {item.item_description}
-                  </Typography> */}
+                  <Typography variant="caption" sx={{ color: "#666666", display: "block", mt: 1 }}>
+                   HS Code: {item.item_hs_code}                   <Button
+                  onClick={ async ()=> {
+                    let data = await ItemsAPI.reassign_hscode(item.item_id);
+                    if(data.success){
+                      alert('HS Code will be re-assigned in a while, you can check back after 1 minute');
+                    }else {
+                      alert('Error re-assigning HS Code');
+                    }
+                  }}
+                    variant="contained"
+                    size="small"
+                    sx={{
+                      backgroundColor: "#ff9800",
+                      color: "white",
+                      textTransform: "none",
+                      fontSize: "12px",
+                    }}
+                  >
+                    Re-assign
+                  </Button>
+                  </Typography>
                   <Typography variant="caption" sx={{ color: "#666666", display: "block" }}>
                     {item.item_weight} {item.item_weight_unit}
                   </Typography>

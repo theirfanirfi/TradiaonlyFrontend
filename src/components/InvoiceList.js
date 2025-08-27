@@ -265,17 +265,6 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                 color: "#000000",
                 fontSize: "14px",
                 textAlign: "center",
-                width: "100px",
-              }}
-            >
-              Total
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                color: "#000000",
-                fontSize: "14px",
-                textAlign: "center",
                 width: "140px",
               }}
             >
@@ -298,7 +287,7 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
           {invoices.map((invoice, index) => {
             
             let items = invoice.llm_response || [];
-            console.log("Invoice Items:", items.items);
+            // console.log("Invoice Items:", items.items);
             
             return (
             <TableRow
@@ -349,35 +338,15 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                         lineHeight: 1.4,
                       }}
                     >
-                      Parts suitable for use solely or principally with the machinery of headings 84.25 to 84.30.
-                    </Typography>
-                    <Box sx={{ mt: 1 }}>
-                      <Chip
-                        label="Check code"
-                        size="small"
-                        sx={{
-                          backgroundColor: "#ff6b35",
-                          color: "white",
-                          fontSize: "11px",
-                          height: "20px",
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Chip
-                      label={invoice.status === "verified" ? "No" : "Yes"}
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        fontSize: "11px",
-                        height: "22px",
-                        borderColor: invoice.status === "verified" ? "#1976d2" : "#ff9800",
-                        color: invoice.status === "verified" ? "#1976d2" : "#ff9800",
-                      }}
-                    />
-                    <Typography variant="caption" sx={{ color: "#666666", fontSize: "11px" }}>
-                      Verified:
+                      {items.items && items.items.length > 0 ? (
+                        items.items.map((item, idx) => (
+                          <Box key={idx} sx={{ mb: idx < items.items.length - 1 ? 0.5 : 0 }}>
+                            {item.item_title} - {item.item_quantity} {item.item_weight} {item.item_weight_unit} - {item.item_price} {item.item_currency}
+                          </Box>
+                        ))
+                      ) : (
+                        "No items found"
+                      )}
                     </Typography>
                   </Box>
                 </Box>
@@ -391,45 +360,7 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                     borderTop: "1px solid #e0e0e0",
                   }}
                 >
-                  <Button
-                    size="small"
-                    sx={{
-                      textTransform: "none",
-                      fontSize: "11px",
-                      color: "#666666",
-                      minWidth: "auto",
-                      p: 0.5,
-                    }}
-                  >
-                    Page 1
-                  </Button>
                   <Box sx={{ display: "flex", gap: 0.5 }}>
-                    <Button
-                      size="small"
-                      variant="text"
-                      sx={{
-                        minWidth: "20px",
-                        width: "20px",
-                        height: "20px",
-                        p: 0,
-                        color: "#666666",
-                      }}
-                    >
-                      ✏️
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="text"
-                      sx={{
-                        minWidth: "20px",
-                        width: "20px",
-                        height: "20px",
-                        p: 0,
-                        color: "#666666",
-                      }}
-                    >
-                      📄
-                    </Button>
                     <Button
                       size="small"
                       variant="text"
@@ -445,9 +376,6 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                     </Button>
                   </Box>
                   <Box sx={{ ml: "auto" }}>
-                    <Typography variant="caption" sx={{ color: "#666666", fontSize: "11px" }}>
-                      Item 1
-                    </Typography>
                   </Box>
                 </Box>
               </TableCell>
@@ -456,21 +384,6 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
               </TableCell>
               <TableCell sx={{ color: "#000000", textAlign: "center", fontWeight: "500" }}>
                 {invoice?.llm_response?.total_weight}
-              </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
-                <Chip
-                  label="$0"
-                  size="small"
-                  sx={{
-                    backgroundColor: "#4caf50",
-                    color: "white",
-                    fontSize: "11px",
-                    fontWeight: "600",
-                  }}
-                />
-                <Typography variant="caption" sx={{ display: "block", fontSize: "10px", color: "#666666", mt: 0.5 }}>
-                  CNY
-                </Typography>
               </TableCell>
               <TableCell sx={{ textAlign: "center" }}>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>

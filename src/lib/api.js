@@ -88,6 +88,8 @@ const DocumentsAPI = {
     console.log('retry document extraction data', data);
     return data;
   },
+
+
 };
 
 const ItemsAPI = {
@@ -103,6 +105,11 @@ const ItemsAPI = {
     const { data } = await api.delete(`/api/items/${itemId}`);
     return data;
   },
+  async reassign_hscode(itemId){
+    const { data } = await api.post(`/api/items/${itemId}/reprocess`);  
+    console.log('reassign hscode data', data);
+    return data;
+  }
 };
 
 const DeclarationAPI = {
