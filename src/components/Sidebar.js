@@ -19,9 +19,6 @@ const Sidebar = ({
   isMobile,
   mobileOpen,
   onClose,
-  onAiChat,
-  onChatHistoryClick,
-  chatHistory,
 }) => {
   const SidebarContent = () => (
     <Box sx={{ color: theme.palette.text.sidebarPrimary }}>
@@ -30,7 +27,7 @@ const Sidebar = ({
       <Button
         variant="contained"
         startIcon={<AddIcon sx={{ color: "white" }} />}
-        onClick={onAiChat}
+        onClick={null}
         sx={{
           mb: 1.5,
           textTransform: "none",
@@ -45,13 +42,12 @@ const Sidebar = ({
           },
         }}
       >
-        Start new chat
+        Start new Process
       </Button>
 
       <List sx={{ px: 0, mt: 1 }}>
         <ListItem
           button
-          onClick={onAiChat}
           sx={{
             px: 1,
             py: 0.5,
@@ -71,7 +67,8 @@ const Sidebar = ({
             }}
           />
           <ListItemText
-            primary="AI chat"
+            primary="Processes"
+          onClick={(item) => {console.log(item);}}
             sx={{
               "& .MuiListItemText-primary": {
                 color: theme.palette.text.sidebarPrimary,
@@ -101,43 +98,6 @@ const Sidebar = ({
             }}
           />
         </ListItem>
-
-        {chatHistory.map((chat, index) => (
-          <React.Fragment key={chat.id}>
-            <ListItem
-              button
-              onClick={() => onChatHistoryClick(chat.id)}
-              sx={{
-                pl: 4,
-                py: 0.5,
-                "&:hover": {
-                  backgroundColor:
-                    theme.palette.mode === "light"
-                      ? "rgba(0,0,0,0.05)"
-                      : "rgba(255,255,255,0.1)",
-                },
-              }}
-            >
-              <ListItemText
-                primary={chat.title}
-                secondary={chat.date}
-                sx={{
-                  "& .MuiListItemText-primary": {
-                    color: theme.palette.text.sidebarPrimary,
-                    fontSize: "0.875rem",
-                  },
-                  "& .MuiListItemText-secondary": {
-                    color: theme.palette.text.sidebarSecondary,
-                    fontSize: "0.75rem",
-                  },
-                }}
-              />
-            </ListItem>
-            {index < chatHistory.length - 1 && (
-              <Box sx={{ borderBottom: "1px solid #4B5563", my: 1 }} />
-            )}
-          </React.Fragment>
-        ))}
 
         <ListItem
           button

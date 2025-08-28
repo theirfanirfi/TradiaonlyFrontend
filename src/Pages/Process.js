@@ -162,9 +162,6 @@ function Process() {
           isMobile={isMobile}
           mobileOpen={mobileOpen}
           onClose={handleDrawerToggle}
-          onAiChat={handleAiChat}
-          onChatHistoryClick={handleChatHistoryClick}
-          chatHistory={chatHistoryData}
         />
 
         <Box

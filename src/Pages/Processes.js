@@ -63,7 +63,9 @@ const fetch_processes = async () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("themeMode");
+    // sessionStorage.removeItem("themeMode");
+    sessionStorage.removeItem("access_token");
+
     navigate("/");
   };
 
@@ -104,9 +106,6 @@ const fetch_processes = async () => {
           isMobile={isMobile}
           mobileOpen={mobileOpen}
           onClose={handleDrawerToggle}
-          onAiChat={handleAiChat}
-          onChatHistoryClick={handleChatHistoryClick}
-          chatHistory={chatHistoryData}
         />
 
         <Box

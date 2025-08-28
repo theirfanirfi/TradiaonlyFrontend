@@ -28,6 +28,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import Logo from "../components/Logo";
+import Sidebar from "../components/Sidebar";
 
 const getDesignTokens = (mode) => ({
   palette: {
@@ -119,51 +120,6 @@ function MainPage() {
     },
   ];
 
-  const Sidebar = ({ children, theme, mobileOpen, onClose }) => {
-    if (isMobile) {
-      return (
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={onClose}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: "block", md: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: 280,
-              backgroundColor: theme.palette.background.paper,
-              color: theme.palette.text.sidebarPrimary, // Use sidebarPrimary for text
-            },
-          }}
-        >
-          <Box sx={{ p: 3, color: theme.palette.text.sidebarPrimary }}>
-            {children}
-          </Box>
-        </Drawer>
-      );
-    }
-
-    return (
-      <Box
-        sx={{
-          width: 280,
-          backgroundColor: theme.palette.background.paper,
-          color: theme.palette.text.sidebarPrimary, // Use sidebarPrimary for text
-          display: { xs: "none", md: "flex" },
-          flexDirection: "column",
-          p: 3,
-          borderRight: `1px solid ${
-            theme.palette.mode === "light" ? "#4B5563" : "#4B5563"
-          }`,
-        }}
-      >
-        {children}
-      </Box>
-    );
-  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -172,192 +128,13 @@ function MainPage() {
         {/* Sidebar */}
         <Sidebar
           theme={theme}
+          isMobile={isMobile}
           mobileOpen={mobileOpen}
           onClose={handleDrawerToggle}
-        >
-          <Logo />
-
-          <Button
-            variant="contained"
-            startIcon={<AddIcon sx={{ color: "white" }} />}
-            onClick={handleAiChat}
-            sx={{
-              mb: 1.5,
-              textTransform: "none",
-              fontWeight: "bold",
-              backgroundColor: "#20438F",
-              color: "white",
-              borderRadius: "8px",
-              py: 1.5,
-              justifyContent: "flex-start",
-              "&:hover": {
-                backgroundColor: "#3366cc",
-              },
-            }}
-          >
-            Start new chat
-          </Button>
-
-          <List sx={{ px: 0, mt: 1 }}>
-            <ListItem
-              button
-              onClick={handleAiChat}
-              sx={{
-                px: 1,
-                py: 0.5,
-                "&:hover": {
-                  backgroundColor:
-                    theme.palette.mode === "light"
-                      ? "rgba(0,0,0,0.05)"
-                      : "rgba(255,255,255,0.1)",
-                },
-              }}
-            >
-              <ChatOutlinedIcon
-                sx={{
-                  mr: 2,
-                  color: theme.palette.text.sidebarSecondary,
-                  fontSize: "20px",
-                }}
-              />
-              <ListItemText
-                primary="AI chat"
-                sx={{
-                  "& .MuiListItemText-primary": {
-                    color: theme.palette.text.sidebarPrimary,
-                    fontWeight: 500,
-                    fontSize: "0.9rem",
-                  },
-                }}
-              />
-            </ListItem>
-
-            <ListItem sx={{ px: 1, py: 0.5 }}>
-              <RestoreOutlinedIcon
-                sx={{
-                  mr: 2,
-                  color: theme.palette.text.sidebarSecondary,
-                  fontSize: "20px",
-                }}
-              />
-              <ListItemText
-                primary="History"
-                sx={{
-                  "& .MuiListItemText-primary": {
-                    color: theme.palette.text.sidebarSecondary,
-                    fontWeight: 500,
-                    fontSize: "0.9rem",
-                  },
-                }}
-              />
-            </ListItem>
-
-            {chatHistory.map((chat, index) => (
-              <React.Fragment key={chat.id}>
-                <ListItem
-                  button
-                  onClick={() => handleChatHistoryClick(chat.id)}
-                  sx={{
-                    pl: 4,
-                    py: 0.5,
-                    "&:hover": {
-                      backgroundColor:
-                        theme.palette.mode === "light"
-                          ? "rgba(0,0,0,0.05)"
-                          : "rgba(255,255,255,0.1)",
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={chat.title}
-                    secondary={chat.date}
-                    sx={{
-                      "& .MuiListItemText-primary": {
-                        color: theme.palette.text.sidebarPrimary,
-                        fontSize: "0.875rem",
-                      },
-                      "& .MuiListItemText-secondary": {
-                        color: theme.palette.text.sidebarSecondary,
-                        fontSize: "0.75rem",
-                      },
-                    }}
-                  />
-                </ListItem>
-                {index < chatHistory.length - 1 && (
-                  <Box sx={{ borderBottom: "1px solid #4B5563", my: 1 }} />
-                )}
-              </React.Fragment>
-            ))}
-
-            <ListItem
-              button
-              sx={{
-                pl: 4,
-                py: 0.5,
-                "&:hover": {
-                  backgroundColor:
-                    theme.palette.mode === "light"
-                      ? "rgba(0,0,0,0.05)"
-                      : "rgba(255,255,255,0.1)",
-                },
-              }}
-            >
-              <ListItemText
-                primary="View all"
-                sx={{
-                  "& .MuiListItemText-primary": {
-                    color: theme.palette.text.sidebarSecondary,
-                    fontSize: "0.875rem",
-                  },
-                }}
-              />
-            </ListItem>
-          </List>
-
-          <Box sx={{ mt: "auto", pt: 2 }}>
-            <Button
-              variant="outlined"
-              fullWidth
-              endIcon={<KeyboardArrowDownIcon />}
-              sx={{
-                textTransform: "none",
-                justifyContent: "space-between",
-                borderColor:
-                  theme.palette.mode === "light" ? "#4B5563" : "#4B5563",
-                color: theme.palette.text.sidebarPrimary,
-                "&:hover": {
-                  borderColor:
-                    theme.palette.mode === "light" ? "#6B7280" : "#6B7280",
-                  backgroundColor:
-                    theme.palette.mode === "light"
-                      ? "rgba(0,0,0,0.05)"
-                      : "rgba(255,255,255,0.1)",
-                },
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box
-                  sx={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: "50%",
-                    backgroundColor: "#4280EF",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    mr: 1,
-                    fontSize: "0.75rem",
-                    fontWeight: "bold",
-                    color: "white",
-                  }}
-                >
-                  A
-                </Box>
-                Alexandra
-              </Box>
-            </Button>
-          </Box>
-        </Sidebar>
+          onAiChat={handleAiChat}
+          onChatHistoryClick={handleChatHistoryClick}
+          chatHistory={chatHistory}
+        />
 
         {/* Main Content */}
         <Box
