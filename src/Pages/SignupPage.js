@@ -24,6 +24,7 @@ import {
 import { Close } from "@mui/icons-material"
 import { useNavigate } from "react-router-dom"
 import googleIconclr from "../images/googlelogo.png"
+import { AuthAPI } from "../lib/api"
 
 const getDesignTokens = (mode) => ({
   palette: {
@@ -134,6 +135,8 @@ function SignupPage({ onBackToLogin }) {
 
   const [signUpEmail, setSignUpEmail] = useState("")
   const [signUpPassword, setSignUpPassword] = useState("")
+  const [signUpFullname, setSignUpFullname] = useState("")
+  const [SignUpUsername, setSignUpUsername] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [passwordsMatch, setPasswordsMatch] = useState(true)
@@ -698,7 +701,7 @@ function SignupPage({ onBackToLogin }) {
                 </div>
               </Box>
 
-              <Button
+              {/* <Button
                 fullWidth
                 variant="outlined"
                 startIcon={
@@ -711,9 +714,9 @@ function SignupPage({ onBackToLogin }) {
                 }}
               >
                 Sign up with Google
-              </Button>
+              </Button> */}
 
-              <Divider
+              {/* <Divider
                 sx={{
                   mb: 2.5,
                   color: theme.palette.text.secondary,
@@ -721,9 +724,75 @@ function SignupPage({ onBackToLogin }) {
                 }}
               >
                 or
-              </Divider>
+              </Divider> */}
 
               <Box component="form" onSubmit={handleSubmit}>
+
+                                <div style={{ marginBottom: "14px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "6px",
+                      color: theme.palette.text.secondary,
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    Full name<span style={{ color: "#ef4444" }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={signUpFullname}
+                    onChange={(e) => setSignUpFullname(e.target.value)}
+                    placeholder="Full Name"
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "10px",
+                      border: `1px solid ${theme.palette.divider}`,
+                      backgroundColor: darkMode ? "transparent" : "#ffffff",
+                      color: theme.palette.text.primary,
+                      fontSize: "0.8rem",
+                      outline: "none",
+                      transition: "border-color 0.2s ease",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = theme.palette.primary.main)}
+                    onBlur={(e) => (e.target.style.borderColor = theme.palette.divider)}
+                  />
+                </div>
+
+                                  <div style={{ marginBottom: "14px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "6px",
+                      color: theme.palette.text.secondary,
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    Username: <span style={{ color: "#ef4444" }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={SignUpUsername}
+                    onChange={(e) => setSignUpUsername(e.target.value)}
+                    placeholder="Username"
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "10px",
+                      border: `1px solid ${theme.palette.divider}`,
+                      backgroundColor: darkMode ? "transparent" : "#ffffff",
+                      color: theme.palette.text.primary,
+                      fontSize: "0.8rem",
+                      outline: "none",
+                      transition: "border-color 0.2s ease",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = theme.palette.primary.main)}
+                    onBlur={(e) => (e.target.style.borderColor = theme.palette.divider)}
+                  />
+                </div>
                 <div style={{ marginBottom: "14px" }}>
                   <label
                     style={{
@@ -876,7 +945,7 @@ function SignupPage({ onBackToLogin }) {
                 </Box>
 
                 <Button
-                  type="submit"
+                  type="button"
                   fullWidth
                   variant="contained"
                   disabled={!agreeToTerms}
@@ -886,6 +955,33 @@ function SignupPage({ onBackToLogin }) {
                     fontSize: "0.85rem",
                     fontWeight: 600,
                     backgroundColor: "#20438F",
+                  }}
+
+                  onClick={async () => {
+                    const formData = {
+                      full_name: signUpFullname,
+                      email: signUpEmail,
+                      password: signUpPassword,
+                      username: SignUpUsername
+                    };
+                    let response = null;
+                    try {
+                      const response = await AuthAPI.register(JSON.stringify(formData));
+                      console.log('Registration successful:', response);
+                      if(response?.success){
+                        alert(response.message);
+                        onBackToLogin();
+                      }
+                      //this is the response from the backend
+                      // {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0aGVpcmZhbnVsbGFoIiwiZXhwIjoxNzU2MzkyOTk2LCJ0eXBlIjoiYWNjZXNzIn0.t0HbO2TUJ_gUBoHpQfrJLyy18-ZnokXRnm8lWdDmPNY","refresh_token":"Y7VOKT98isMaQN9B-RlmIXbiQV2ZER_t80ieURaKZh0","token_type":"bearer","expires_in":1800}
+                      
+                      // store it in session storage
+ 
+                    } catch (error) {
+                      console.error('Registration failed:', error.response.data);
+                      alert(error.response.data.detail || 'Registration failed. Please try again.');
+                      // Handle registration errors (e.g., show error message)
+                    }
                   }}
                 >
                   Create Account

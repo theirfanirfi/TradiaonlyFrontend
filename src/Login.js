@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom"
 import SignupPage from "./Pages/SignupPage"
 import googleIconclr from "./images/googlelogo.png"
 import Logo from "./components/Logo"
+import { AuthAPI } from "./lib/api"
 
 const getDesignTokens = (mode) => ({
   palette: {
@@ -451,7 +452,27 @@ function Login() {
 
   const handleLogin = useCallback((email, password) => {
     if (email && password) {
-      navigate("/main")
+      AuthAPI.login({ email, password })
+        .then((response) => {
+          console.log('Login successful:', response);
+          if(response?.access_token){
+            sessionStorage.setItem('access_token', response.access_token);
+            sessionStorage.setItem('refresh_token', response.refresh_token);
+            sessionStorage.setItem('token_type', response.token_type);
+            sessionStorage.setItem('expires_in', response.expires_in);
+            sessionStorage.setItem('user_email', email);
+            // Assuming response contains user_fullname
+            sessionStorage.setItem('user_fullname', response.user_fullname || '');
+            navigate("/main");
+          } else {
+            alert(response.detail || 'Login failed. Please try again.');
+          }
+        })
+        .catch((error) => {
+          console.error('Login failed:', error.response?.data || error.message);
+          alert(error.response?.data?.detail || 'Login failed. Please try again.');
+        });
+      // navigate("/main")
     }
   }, [navigate])
 

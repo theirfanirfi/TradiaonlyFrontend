@@ -2,10 +2,30 @@ import axios from "axios";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://3.27.231.129:8000";
 
+
 const api = axios.create({
   baseURL: apiBaseUrl,
   withCredentials: true,
 });
+
+// Attach Bearer token to all requests except login and register
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('access_token');
+    // Only add Authorization header if not login or register
+    if (
+      token &&
+      config.url &&
+      !config.url.includes('/api/auth/login') &&
+      !config.url.includes('/api/auth/register')
+    ) {
+      config.headers = config.headers || {};
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
   (response) => response,
@@ -127,10 +147,41 @@ const DeclarationAPI = {
   },
 };
 
+const AuthAPI = {
+  async register(formData) {
+    const  {data}  = await api.post(`/api/auth/register`, formData, {
+      headers: { "Content-Type": "application/json" }
+    });
+    console.log('register api', data);
+    return data;
+  },
+    async login(formData) {
+    const  {data}  = await api.post(`/api/auth/login`, formData, {
+      headers: { "Content-Type": "application/json" }
+    });
+    console.log('login api', data);
+    return data;
+  },
+  // async update(itemId, payload) {
+  //   const { data } = await api.put(`/api/items/${itemId}`, payload);
+  //   return data;
+  // },
+  // async remove(itemId) {
+  //   const { data } = await api.delete(`/api/items/${itemId}`);
+  //   return data;
+  // },
+  // async reassign_hscode(itemId){
+  //   const { data } = await api.post(`/api/items/${itemId}/reprocess`);  
+  //   console.log('reassign hscode data', data);
+  //   return data;
+  // }
+};
+
 export {
   api,
   ProcessAPI,
   DocumentsAPI,
   ItemsAPI,
   DeclarationAPI,
+  AuthAPI
 };
