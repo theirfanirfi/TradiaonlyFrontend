@@ -14,17 +14,7 @@ import Sidebar from "../components/Sidebar";
 import TopBar from "../components/TopBar";
 import ProcessTable from "../components/ProcessTable";
 import AddProcessForm from "../components/AddProcessForm";
-import { chatHistoryData } from "../data/chatHistory";
 import { ProcessAPI } from "../lib/api";
-
-// Mock initial data
-const initialProcesses = [
-  { process_id: 1, process_name: "Data Processing Pipeline" },
-  { process_id: 2, process_name: "User Authentication" },
-  { process_id: 3, process_name: "Email Notification Service" },
-  { process_id: 4, process_name: "Payment Processing" },
-  { process_id: 5, process_name: "Report Generation" },
-];
 
 function Processes() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -35,8 +25,7 @@ function Processes() {
   });
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [processes, setProcesses] = useState(initialProcesses);
-  const [nextId, setNextId] = useState(6);
+  const [processes, setProcesses] = useState([]);
 
   const navigate = useNavigate();
   const theme = createAppTheme(darkMode ? "dark" : "light");
@@ -71,14 +60,6 @@ const fetch_processes = async () => {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
-
-  const handleAiChat = () => {
-    navigate("/chat");
-  };
-
-  const handleChatHistoryClick = (chatId) => {
-    navigate(`/chat/${chatId}`);
   };
 
   const handleAddProcess = async (processName, declarationType) => {
@@ -148,11 +129,20 @@ const fetch_processes = async () => {
               <AddProcessForm theme={theme} onAddProcess={handleAddProcess} />
             </Box>
 
+            {processes.length === 0 ? (
+              <Typography
+                variant="body1"
+                sx={{ color: theme.palette.text.secondary }}
+              >
+                Checking for processes...
+              </Typography>
+            ) : 
             <ProcessTable
               theme={theme}
               processes={processes}
               onDeleteProcess={handleDeleteProcess}
             />
+          }
           </Container>
         </Box>
       </Box>
