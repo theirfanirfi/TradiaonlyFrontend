@@ -6,26 +6,14 @@ import {
   ThemeProvider,
   useMediaQuery,
   Typography,
-  Container,
-  Paper,
+
   Button,
-  Chip,
-  Select,
-  MenuItem,
-  FormControl,
-  IconButton,
-  Divider,
+
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import CloseIcon from "@mui/icons-material/Close";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
 import { createAppTheme } from "../theme/theme";
-import Sidebar from "../components/Sidebar";
-import TopBar from "../components/TopBar";
-import { chatHistoryData } from "../data/chatHistory";
 import { DocumentsAPI, ItemsAPI } from "../lib/api";
-import { set } from "zod";
 
 function InvoiceDetail() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -35,12 +23,8 @@ function InvoiceDetail() {
     return false;
   });
 
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [invoiceData, setInvoiceData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showGroups, setShowGroups] = useState(false);
-  const [verified, setVerified] = useState("No");
-  const [currency, setCurrency] = useState("CNY");
   const [pdf, setPDF] = useState(null);
 
   const navigate = useNavigate();

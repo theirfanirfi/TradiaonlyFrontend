@@ -1,5 +1,3 @@
-// components/InvoiceList.js
-import React from "react";
 import {
   Table,
   TableBody,
@@ -17,8 +15,6 @@ import {
 } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import ScaleIcon from "@mui/icons-material/Scale";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocument }) => {
@@ -265,17 +261,6 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                 color: "#000000",
                 fontSize: "14px",
                 textAlign: "center",
-                width: "140px",
-              }}
-            >
-              Comm.Descr
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                color: "#000000",
-                fontSize: "14px",
-                textAlign: "center",
                 width: "120px",
               }}
             >
@@ -386,37 +371,9 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                 {invoice?.llm_response?.total_weight}
               </TableCell>
               <TableCell sx={{ textAlign: "center" }}>
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>
-                  <Typography variant="body2" sx={{ color: "#000000", fontSize: "13px" }}>
-                    GRAPPLE ROTATOR
-                  </Typography>
-                  <Button
-                    size="small"
-                    sx={{
-                      minWidth: "16px",
-                      width: "16px",
-                      height: "16px",
-                      p: 0,
-                      color: "#666666",
-                    }}
-                  >
-                    ✏️
-                  </Button>
-                </Box>
-              </TableCell>
-              <TableCell sx={{ textAlign: "center" }}>
                 <Box>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: "#000000",
-                      fontSize: "13px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    84314100.00
-                  </Typography>
                   <Button
+                  onClick={() =>  onInvoiceClick(invoice.document_id) }
                     variant="text"
                     size="small"
                     sx={{
@@ -428,7 +385,7 @@ const InvoiceList = ({ invoices, loading, process, onInvoiceClick, onDeleteDocum
                       textDecoration: "underline",
                     }}
                   >
-                    Change Tariff
+                    View HS Codes assigned
                   </Button>
                 </Box>
               </TableCell>

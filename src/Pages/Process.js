@@ -16,7 +16,6 @@ import UploadModal from "../components/UploadModal";
 import UploadProgressDialog from "../components/UploadProgressDialog";
 import UploadButton from "../components/UploadButton";
 import useFileUpload from "../hooks/useFileUpload";
-import { chatHistoryData } from "../data/chatHistory";
 import { ProcessAPI, DocumentsAPI } from "../lib/api";
 
 function Process() {
@@ -128,13 +127,6 @@ function Process() {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleAiChat = () => {
-    navigate("/chat");
-  };
-
-  const handleChatHistoryClick = (chatId) => {
-    navigate(`/chat/${chatId}`);
-  };
 
   const handleInvoiceClick = (invoiceId) => {
     navigate(`/processes/${processId}/invoice/${invoiceId}`);
