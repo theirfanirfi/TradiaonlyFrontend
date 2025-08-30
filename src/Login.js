@@ -462,7 +462,7 @@ function Login() {
             sessionStorage.setItem('expires_in', response.expires_in);
             sessionStorage.setItem('user_email', email);
             // Assuming response contains user_fullname
-            sessionStorage.setItem('user_fullname', response.user_fullname || '');
+            sessionStorage.setItem('full_name', response.full_name || '');
             navigate("/main");
           } else {
             alert(response.detail || 'Login failed. Please try again.');

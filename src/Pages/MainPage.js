@@ -266,7 +266,7 @@ function MainPage() {
                   color: theme.palette.text.primary,
                 }}
               >
-                Good morning, Alexandra
+                Welcome {sessionStorage.getItem("full_name") || "User"}
               </Typography>
 
               <Typography
@@ -280,7 +280,7 @@ function MainPage() {
                   fontSize: { xs: "18px", sm: "24px" },
                 }}
               >
-                Ask. Explore. Create. With Tradia AI
+                We Create import/export customs declarations for you. 
               </Typography>
 
               <Box
@@ -317,7 +317,7 @@ function MainPage() {
                 </Button>
               </Box>
 
-              <Button
+              {/* <Button
                 variant="outlined"
                 startIcon={<ChatOutlinedIcon />}
                 onClick={handleAiChat}
@@ -336,7 +336,7 @@ function MainPage() {
                 }}
               >
                 AI Chat
-              </Button>
+              </Button> */}
             </Box>
 
             {/* History Section - Matching the image exactly */}
@@ -357,23 +357,9 @@ function MainPage() {
                     color: theme.palette.text.primary,
                   }}
                 >
-                  History
+                  Tradia Completes the process under 20 minutes for you
                 </Typography>
-
-                <Button
-                  variant="text"
-                  sx={{
-                    textTransform: "none",
-                    color: theme.palette.primary.main,
-                    fontSize: "14px",
-                    fontWeight: 500,
-                  }}
-                >
-                  View all →
-                </Button>
               </Box>
-
-              {/* History items with vertical dividers between them */}
               <Box
                 sx={{
                   display: "flex",
@@ -392,23 +378,33 @@ function MainPage() {
                 {[
                   {
                     id: "coding-assistance",
-                    title: "Coding Assistance Requested",
-                    time: "30 minutes ago",
+                    title: "Create an Import or Export declaration Process",
+                    time: "10 Seconds",
                   },
                   {
                     id: "write-article",
-                    title: "Write an article about AI Assistant",
-                    time: "1 day ago",
+                    title: "Upload invoices, or bill of lading",
+                    time: "2 minutes",
                   },
                   {
                     id: "romania-weather",
-                    title: "Romania weather in September",
-                    time: "2 days ago",
+                    title: "Tradia Extracts and Understands key data",
+                    time: "12 minutes",
+                  },
+                  {
+                    id: "create-items",
+                    title: "Create list of items to be declared",
+                    time: "1 minutes",
+                  },
+                  {
+                    id: "assigns-code",
+                    title: "Automatically assigns HS code",
+                    time: "1 minutes",
                   },
                 ].map((item, index, array) => (
                   <React.Fragment key={item.id}>
                     <Box
-                      onClick={() => handleChatHistoryClick(item.id)}
+                      onClick={() => null}
                       sx={{
                         flex: 1,
                         p: 2,

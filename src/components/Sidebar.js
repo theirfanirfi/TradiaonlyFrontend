@@ -13,6 +13,7 @@ import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import Logo from "./Logo";
+import { Link, useNavigate } from "react-router-dom";
 
 const Sidebar = ({
   theme,
@@ -20,6 +21,9 @@ const Sidebar = ({
   mobileOpen,
   onClose,
 }) => {
+  const navigate = useNavigate();
+  let user_fullname = sessionStorage.getItem("full_name") || "User";
+  let user_fullnameFirstChar = user_fullname.charAt(0).toUpperCase();
   const SidebarContent = () => (
     <Box sx={{ color: theme.palette.text.sidebarPrimary }}>
       <Logo />
@@ -27,7 +31,7 @@ const Sidebar = ({
       <Button
         variant="contained"
         startIcon={<AddIcon sx={{ color: "white" }} />}
-        onClick={null}
+        onClick={()=> navigate("/processes")}
         sx={{
           mb: 1.5,
           textTransform: "none",
@@ -46,6 +50,7 @@ const Sidebar = ({
       </Button>
 
       <List sx={{ px: 0, mt: 1 }}>
+        <Link to="/processes" style={{ textDecoration: 'none' }}>
         <ListItem
           button
           sx={{
@@ -78,50 +83,7 @@ const Sidebar = ({
             }}
           />
         </ListItem>
-
-        <ListItem sx={{ px: 1, py: 0.5 }}>
-          <RestoreOutlinedIcon
-            sx={{
-              mr: 2,
-              color: theme.palette.text.sidebarSecondary,
-              fontSize: "20px",
-            }}
-          />
-          <ListItemText
-            primary="History"
-            sx={{
-              "& .MuiListItemText-primary": {
-                color: theme.palette.text.sidebarSecondary,
-                fontWeight: 500,
-                fontSize: "0.9rem",
-              },
-            }}
-          />
-        </ListItem>
-
-        <ListItem
-          button
-          sx={{
-            pl: 4,
-            py: 0.5,
-            "&:hover": {
-              backgroundColor:
-                theme.palette.mode === "light"
-                  ? "rgba(0,0,0,0.05)"
-                  : "rgba(255,255,255,0.1)",
-            },
-          }}
-        >
-          <ListItemText
-            primary="View all"
-            sx={{
-              "& .MuiListItemText-primary": {
-                color: theme.palette.text.sidebarSecondary,
-                fontSize: "0.875rem",
-              },
-            }}
-          />
-        </ListItem>
+        </Link>
       </List>
 
       <Box sx={{ mt: "auto", pt: 2 }}>
@@ -161,9 +123,9 @@ const Sidebar = ({
                 color: "white",
               }}
             >
-              A
+              {user_fullnameFirstChar}
             </Box>
-            Alexandra
+            {user_fullname}
           </Box>
         </Button>
       </Box>
