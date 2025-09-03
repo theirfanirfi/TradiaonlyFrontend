@@ -9,6 +9,7 @@ import ChatPage from './Pages/ChatPage'; // Example
 import Processes from './Pages/Processes';
 import Process from './Pages/Process';
 import InvoiceDetail from './Pages/InvoiceDetail';
+import ImportDeclarationForm from './Pages/ImportDeclaration';
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -42,6 +43,8 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
+          <Route path="/declaration/import" element={<ImportDeclarationForm />} />
+
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}> 
           <Route path="/main" element={<MainPage />} />

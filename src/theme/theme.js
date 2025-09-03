@@ -1,37 +1,44 @@
-// theme/theme.js
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 
-const getDesignTokens = (mode) => ({
-  palette: {
-    mode,
-    ...(mode === "light"
-      ? {
-          primary: { main: "#4280EF" },
-          background: {
-            default: "#ffffff",
-            paper: "#374151",
+export function createAppTheme(mode = "light") {
+  return createTheme({
+    palette: {
+      mode,
+      background: {
+        default: mode === "dark" ? "#121212" : "#f9f9f9", // page background
+        paper: mode === "dark" ? "#1e1e1e" : "#ffffff",   // cards, Paper
+      },
+      text: {
+        primary: mode === "dark" ? "#ffffff" : "#000000",
+        secondary: mode === "dark" ? "#cccccc" : "#555555",
+      },
+    },
+    components: {
+      MuiTextField: {
+        defaultProps: {
+          variant: "outlined",
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: mode === "dark" ? "#bbbbbb" : "#333333", // label color
+            "&.Mui-focused": {
+              color: mode === "dark" ? "#ffffff" : "#000000",
+            },
           },
-          text: {
-            primary: "#050519",
-            secondary: "#666666",
-            sidebarPrimary: "#ffffff",
-            sidebarSecondary: "#D1D5DB",
+        },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          input: {
+            color: mode === "dark" ? "#ffffff" : "#000000", // text inside input
           },
-        }
-      : {
-          primary: { main: "#4280EF" },
-          background: {
-            default: "#33363F",
-            paper: "#050519",
+          notchedOutline: {
+            borderColor: mode === "dark" ? "#888888" : "#cccccc",
           },
-          text: {
-            primary: "#ffffff",
-            secondary: "#bbbbbb",
-            sidebarPrimary: "#ffffff",
-            sidebarSecondary: "#bbbbbb",
-          },
-        }),
-  },
-});
-
-export const createAppTheme = (mode) => createTheme(getDesignTokens(mode));
+        },
+      },
+    },
+  });
+}
