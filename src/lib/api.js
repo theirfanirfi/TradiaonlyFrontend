@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://3.27.231.129:8000";
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://13.210.208.42:8000";
 
 
 const api = axios.create({
@@ -134,11 +134,18 @@ const ItemsAPI = {
 
 const DeclarationAPI = {
   async get(processId) {
-    const { data } = await api.get(`/api/declaration/${processId}`);
+    const { data } = await api.get(`/api/declaration/import/${processId}/section_a`);
     return data;
   },
-  async update(processId, payload) {
-    const { data } = await api.put(`/api/declaration/${processId}/update`, payload);
+  async update(processId, payload, section) {
+    // let formData = {
+    //   'section_a': payload
+    // }
+    // console.log('formData',formData);
+
+    const { data } = await api.put(`/api/declaration/import/${processId}/update/${section}`, payload, {
+      headers: { "Content-Type": "application/json" }
+    });
     return data;
   },
   async generatePdf(processId) {

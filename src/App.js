@@ -43,7 +43,6 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-          <Route path="/declaration/import" element={<ImportDeclarationForm />} />
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}> 
@@ -53,6 +52,8 @@ function App() {
           <Route path="/processes/:processId?/invoice/:invoiceId?" element={<InvoiceDetail />} />
           <Route path="/main/:chatId?" element={<MainPage />} />
           <Route path="/chat/:chatId?" element={<ChatPage />} />
+          <Route path="/declaration/import/:processId?" element={<ImportDeclarationForm />} />
+
         </Route>
       </Routes>
 

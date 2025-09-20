@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   Typography,
   Container,
+  Button
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { createAppTheme } from "../theme/theme";
@@ -211,6 +212,15 @@ function Process() {
               >
                 Upload Invoices
               </UploadButton>
+
+              <Button
+              onClick={()=>navigate(`/declaration/import/${processId}`)}
+              sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color:"white",
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.dark,
+                  }}}>Initiate B650 Form</Button>
             </Box>
 
             <InvoiceList
