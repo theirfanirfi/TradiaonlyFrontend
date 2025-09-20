@@ -222,10 +222,13 @@ function ImportDeclarationForm() {
       console.log('sectionUpdate', sectionUpdate)
       let mapped = mapSectionAResponseToState(sectionUpdate.import_declaration_section_a)
       setSectionA(mapped)
+    }else if(activeStep == 1){
+      let sectionBUpdate = await DeclarationAPI.update(processId, {}, 'section_b')
+      console.log(sectionBUpdate);
     }
     const key = `declaration:${processId}`;
     const payload = { sectionA, sectionB, lines };
-    localStorage.setItem(key, JSON.stringify(payload));
+    // localStorage.setItem(key, JSON.stringify(payload));
   };
 
   const handleThemeToggle = () => {
