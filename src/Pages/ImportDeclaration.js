@@ -28,6 +28,8 @@ import TopBar from "../components/TopBar";
 import { DeclarationAPI } from "../lib/api";
 import mapImportDeclarationSectionAToApiPayload from "../lib/schema-utils/map_import_declaration_section_a";
 import mapSectionAResponseToState from "../lib/schema-utils/mapping_section_a_response";
+import mapSectionB from "../lib/schema-utils/map_section_b_import_declaration";
+import reverseMapSectionB from "../lib/schema-utils/map_section_b_state_to_api";
 
 /**
  * ImportDeclarationForm
@@ -180,7 +182,9 @@ function ImportDeclarationForm() {
         }
 
              if (Object.keys(res.import_declaration_section_b).length > 0) {
-          console.log('section b is not null');
+              let sectionb = res.import_declaration_section_b
+              let mappedSectionB = mapSectionB(sectionb)
+              setSectionB(mappedSectionB);
         }
 
              if (Object.keys(res.import_declaration_section_c).length > 0) {
@@ -223,8 +227,11 @@ function ImportDeclarationForm() {
       let mapped = mapSectionAResponseToState(sectionUpdate.import_declaration_section_a)
       setSectionA(mapped)
     }else if(activeStep == 1){
-      let sectionBUpdate = await DeclarationAPI.update(processId, {}, 'section_b')
-      console.log(sectionBUpdate);
+      let payload = reverseMapSectionB(sectionB);
+      let sectionBUpdate = await DeclarationAPI.update(processId, payload, 'section_b')
+      let sectionb = sectionBUpdate.import_declaration_section_b
+      let mappedSectionB = mapSectionB(sectionb);
+      setSectionB(mappedSectionB)
     }
     const key = `declaration:${processId}`;
     const payload = { sectionA, sectionB, lines };

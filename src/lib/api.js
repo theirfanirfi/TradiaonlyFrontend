@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://13.210.208.42:8000";
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://3.25.121.218:8000";
 
 
 const api = axios.create({
