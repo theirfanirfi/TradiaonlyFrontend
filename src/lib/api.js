@@ -35,6 +35,11 @@ api.interceptors.response.use(
       // eslint-disable-next-line no-console
       console.error("API Error:", error.response.data.message);
     }
+
+    if (error?.response?.status === 401) {
+      return window.location.href = "/login";
+    }
+
     return Promise.reject(error);
   }
 );
@@ -144,6 +149,17 @@ const DeclarationAPI = {
     // console.log('formData',formData);
 
     const { data } = await api.put(`/api/declaration/import/${processId}/update/${section}`, payload, {
+      headers: { "Content-Type": "application/json" }
+    });
+    return data;
+  },
+  async getSectionB(processId) {
+    // let formData = {
+    //   'section_a': payload
+    // }
+    // console.log('formData',formData);
+
+    const { data } = await api.get(`/api/declaration/import/${processId}/update/section_b`, {
       headers: { "Content-Type": "application/json" }
     });
     return data;

@@ -30,6 +30,7 @@ import mapImportDeclarationSectionAToApiPayload from "../lib/schema-utils/map_im
 import mapSectionAResponseToState from "../lib/schema-utils/mapping_section_a_response";
 import mapSectionB from "../lib/schema-utils/map_section_b_import_declaration";
 import reverseMapSectionB from "../lib/schema-utils/map_section_b_state_to_api";
+import SectionAForm from "../components/B650/SectionAForm";
 
 /**
  * ImportDeclarationForm
@@ -203,6 +204,10 @@ function ImportDeclarationForm() {
     autoFillData();
   }, []);
 
+  useEffect(()=>{
+    console.log(activeStep)
+  },[activeStep])
+
   // local draft persistence by processId
   useEffect(() => {
     if (!isLoading) {
@@ -233,8 +238,6 @@ function ImportDeclarationForm() {
       let mappedSectionB = mapSectionB(sectionb);
       setSectionB(mappedSectionB)
     }
-    const key = `declaration:${processId}`;
-    const payload = { sectionA, sectionB, lines };
     // localStorage.setItem(key, JSON.stringify(payload));
   };
 
