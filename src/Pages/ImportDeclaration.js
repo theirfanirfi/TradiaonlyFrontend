@@ -31,6 +31,8 @@ import mapSectionAResponseToState from "../lib/schema-utils/mapping_section_a_re
 import mapSectionB from "../lib/schema-utils/map_section_b_import_declaration";
 import reverseMapSectionB from "../lib/schema-utils/map_section_b_state_to_api";
 import SectionAForm from "../components/B650/SectionAForm";
+import mapSectionC from "../lib/schema-utils/map_import_section_c_response_to_state";
+import reverseMapSectionC from "../lib/schema-utils/map_section_c_state_to_api";
 
 /**
  * ImportDeclarationForm
@@ -163,7 +165,7 @@ function ImportDeclarationForm() {
   });
 
   // SECTION C – multiple lines
-  const [lines, setLines] = useState([{ ...DEFAULT_LINE }]);
+  const [lines, setLines] = useState({ ...DEFAULT_LINE });
 
   // Simulate auto-filling process
   useEffect(() => {
@@ -189,7 +191,9 @@ function ImportDeclarationForm() {
         }
 
              if (Object.keys(res.import_declaration_section_c).length > 0) {
-          console.log('section b is not null');
+              let sectionc = res.import_declaration_section_c
+              let mappedSectionC = mapSectionC(sectionc)
+              setLines({...mappedSectionC})
         }
         console.log('res', res)
       }).catch(c => console.log('catch', c));
@@ -210,18 +214,7 @@ function ImportDeclarationForm() {
 
   // local draft persistence by processId
   useEffect(() => {
-    if (!isLoading) {
-      const key = `declaration:${processId}`;
-      const raw = localStorage.getItem(key);
-      if (raw) {
-        try {
-          const data = JSON.parse(raw);
-          if (data.sectionA) setSectionA(data.sectionA);
-          if (data.sectionB) setSectionB(data.sectionB);
-          if (data.lines) setLines(data.lines);
-        } catch { }
-      }
-    }
+
   }, [processId, isLoading]);
 
   const saveDraft = async () => {
@@ -238,6 +231,14 @@ function ImportDeclarationForm() {
       let mappedSectionB = mapSectionB(sectionb);
       setSectionB(mappedSectionB)
     }
+    else if(activeStep == 2){
+      let payload = reverseMapSectionC(lines)
+      console.log('payload', payload)
+      let sectionBUpdate = await DeclarationAPI.update(processId, payload, 'section_c')
+      let sectionc = sectionBUpdate.import_declaration_section_c
+      let mappedSectionC = reverseMapSectionC(sectionc)
+      setLines({...mappedSectionC})
+    }
     // localStorage.setItem(key, JSON.stringify(payload));
   };
 
@@ -252,11 +253,11 @@ function ImportDeclarationForm() {
   const next = () => setActiveStep((s) => Math.min(s + 1, steps.length - 1));
   const back = () => setActiveStep((s) => Math.max(s - 1, 0));
 
-  const addLine = () => setLines((arr) => [...arr, { ...DEFAULT_LINE }]);
-  const removeLine = (idx) => setLines((arr) => arr.filter((_, i) => i !== idx));
-
-  const updateLine = (idx, field, value) => {
-    setLines((arr) => arr.map((l, i) => (i === idx ? { ...l, [field]: value } : l)));
+  const updateLine = (field, value) => {
+    setLines({
+      ...lines,
+      [field]: value
+    });
   };
 
   const StepActions = () => (
@@ -269,7 +270,9 @@ function ImportDeclarationForm() {
         {activeStep < steps.length - 1 ? (
           <Button variant="contained" onClick={next}>Next</Button>
         ) : (
-          <Button variant="contained" color="primary" onClick={saveDraft}>Finish</Button>
+          <Button variant="contained" color="primary" onClick={()=>{
+            DeclarationAPI.generatePdf(processId)
+          }}>Finish</Button>
         )}
       </Box>
     </Box>
@@ -484,63 +487,50 @@ function ImportDeclarationForm() {
   const CForm = () => (
     <Box component={Paper} elevation={0} sx={{ p: 3, borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
       <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Section C – Tariff details</Typography>
-      {lines.map((line, idx) => (
-        <Paper key={idx} variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Line {idx + 1}</Typography>
-            <Box>
-              <IconButton onClick={() => addLine()} size="small" sx={{ mr: 1 }}><Add /></IconButton>
-              {lines.length > 1 && (
-                <IconButton onClick={() => removeLine(idx)} size="small" color="error"><Delete /></IconButton>
-              )}
-            </Box>
-          </Box>
+     
+        <Paper key={lines.priceAmount} variant="outlined" sx={{ p: 2, mb: 2, borderRadius: 2 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12}><TextField label="Goods description" fullWidth value={line.goodsDescription} onChange={(e) => updateLine(idx, 'goodsDescription', e.target.value)} /></Grid>
-            <Grid item xs={12} md={4}><TextField label="Supplier ID (CCID/ABN)" fullWidth value={line.supplierId} onChange={(e) => updateLine(idx, 'supplierId', e.target.value)} /></Grid>
-            <Grid item xs={12} md={4}><TextField label="Supplier name" fullWidth value={line.supplierName} onChange={(e) => updateLine(idx, 'supplierName', e.target.value)} /></Grid>
-            <Grid item xs={12} md={4}><TextField label="Vendor ID (ABN/ARN)" fullWidth value={line.vendorId} onChange={(e) => updateLine(idx, 'vendorId', e.target.value)} /></Grid>
-            <Grid item xs={12} md={4}><TextField label="Tariff classification number" fullWidth value={line.tariffClassificationNumber} onChange={(e) => updateLine(idx, 'tariffClassificationNumber', e.target.value)} /></Grid>
-            <Grid item xs={12} md={2}><TextField label="Stat. code" fullWidth value={line.statCode} onChange={(e) => updateLine(idx, 'statCode', e.target.value)} /></Grid>
+            <Grid item xs={12}><TextField label="Goods description" fullWidth value={lines.goodsDescription} onChange={(e) => updateLine( 'goodsDescription', e.target.value)} /></Grid>
+            <Grid item xs={12} md={4}><TextField label="Supplier ID (CCID/ABN)" fullWidth value={lines.supplierId} onChange={(e) => updateLine( 'supplierId', e.target.value)} /></Grid>
+            <Grid item xs={12} md={4}><TextField label="Supplier name" fullWidth value={lines.supplierName} onChange={(e) => updateLine( 'supplierName', e.target.value)} /></Grid>
+            <Grid item xs={12} md={4}><TextField label="Vendor ID (ABN/ARN)" fullWidth value={lines.vendorId} onChange={(e) => updateLine( 'vendorId', e.target.value)} /></Grid>
+            <Grid item xs={12} md={4}><TextField label="Tariff classification number" fullWidth value={lines.tariffClassificationNumber} onChange={(e) => updateLine( 'tariffClassificationNumber', e.target.value)} /></Grid>
+            <Grid item xs={12} md={2}><TextField label="Stat. code" fullWidth value={lines.statCode} onChange={(e) => updateLine( 'statCode', e.target.value)} /></Grid>
 
-            <Grid item xs={12} md={3}><TextField label="Valuation basis type" fullWidth value={line.valuationBasisType} onChange={(e) => updateLine(idx, 'valuationBasisType', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Treatment code" fullWidth value={line.treatmentCode} onChange={(e) => updateLine(idx, 'treatmentCode', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="GST exemption code" fullWidth value={line.gstExemptionCode} onChange={(e) => updateLine(idx, 'gstExemptionCode', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Establishment code" fullWidth value={line.establishmentCode} onChange={(e) => updateLine(idx, 'establishmentCode', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Valuation basis type" fullWidth value={lines.valuationBasisType} onChange={(e) => updateLine( 'valuationBasisType', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Treatment code" fullWidth value={lines.treatmentCode} onChange={(e) => updateLine( 'treatmentCode', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="GST exemption code" fullWidth value={lines.gstExemptionCode} onChange={(e) => updateLine( 'gstExemptionCode', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Establishment code" fullWidth value={lines.establishmentCode} onChange={(e) => updateLine( 'establishmentCode', e.target.value)} /></Grid>
 
             <Grid item xs={12}><Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Price / Quantity</Typography></Grid>
-            <Grid item xs={12} md={3}><TextField label="Type" fullWidth value={line.priceType} onChange={(e) => updateLine(idx, 'priceType', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Amount" type="number" fullWidth value={line.priceAmount} onChange={(e) => updateLine(idx, 'priceAmount', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Type" fullWidth value={lines.priceType} onChange={(e) => updateLine( 'priceType', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Amount" type="number" fullWidth value={lines.priceAmount} onChange={(e) => updateLine( 'priceAmount', e.target.value)} /></Grid>
             <Grid item xs={12} md={2}>
-              <TextField select label="Currency" fullWidth value={line.priceCurrency} onChange={(e) => updateLine(idx, 'priceCurrency', e.target.value)}>
+              <TextField select label="Currency" fullWidth value={lines.priceCurrency} onChange={(e) => updateLine( 'priceCurrency', e.target.value)}>
                 {["AUD", "USD", "EUR", "GBP", "JPY", "CNY"].map((c) => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={2}><TextField label="Quantity" type="number" fullWidth value={line.quantity} onChange={(e) => updateLine(idx, 'quantity', e.target.value)} /></Grid>
-            <Grid item xs={12} md={2}><TextField label="Unit" fullWidth value={line.unit} onChange={(e) => updateLine(idx, 'unit', e.target.value)} /></Grid>
-            <Grid item xs={12} md={4}><TextField label="Permit number" fullWidth value={line.permitNumber} onChange={(e) => updateLine(idx, 'permitNumber', e.target.value)} /></Grid>
+            <Grid item xs={12} md={2}><TextField label="Quantity" type="number" fullWidth value={lines.quantity} onChange={(e) => updateLine( 'quantity', e.target.value)} /></Grid>
+            <Grid item xs={12} md={2}><TextField label="Unit" fullWidth value={lines.unit} onChange={(e) => updateLine( 'unit', e.target.value)} /></Grid>
+            <Grid item xs={12} md={4}><TextField label="Permit number" fullWidth value={lines.permitNumber} onChange={(e) => updateLine( 'permitNumber', e.target.value)} /></Grid>
 
             <Grid item xs={12}><Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Origin & preference</Typography></Grid>
-            <Grid item xs={12} md={3}><TextField label="Origin country" fullWidth value={line.originCountry} onChange={(e) => updateLine(idx, 'originCountry', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Preference origin country" fullWidth value={line.preferenceOriginCountry} onChange={(e) => updateLine(idx, 'preferenceOriginCountry', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Preference scheme type" fullWidth value={line.preferenceSchemeType} onChange={(e) => updateLine(idx, 'preferenceSchemeType', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Preference rule type" fullWidth value={line.preferenceRuleType} onChange={(e) => updateLine(idx, 'preferenceRuleType', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Origin country" fullWidth value={lines.originCountry} onChange={(e) => updateLine( 'originCountry', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Preference origin country" fullWidth value={lines.preferenceOriginCountry} onChange={(e) => updateLine( 'preferenceOriginCountry', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Preference scheme type" fullWidth value={lines.preferenceSchemeType} onChange={(e) => updateLine( 'preferenceSchemeType', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Preference rule type" fullWidth value={lines.preferenceRuleType} onChange={(e) => updateLine( 'preferenceRuleType', e.target.value)} /></Grid>
 
             <Grid item xs={12}><Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Treatment & tariff instruments</Typography></Grid>
-            <Grid item xs={12} md={3}><TextField label="Instrument type" fullWidth value={line.instrumentType1} onChange={(e) => updateLine(idx, 'instrumentType1', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Instrument number" fullWidth value={line.instrumentNumber1} onChange={(e) => updateLine(idx, 'instrumentNumber1', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Instrument type" fullWidth value={line.instrumentType2} onChange={(e) => updateLine(idx, 'instrumentType2', e.target.value)} /></Grid>
-            <Grid item xs={12} md={3}><TextField label="Instrument number" fullWidth value={line.instrumentNumber2} onChange={(e) => updateLine(idx, 'instrumentNumber2', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Instrument type" fullWidth value={lines.instrumentType1} onChange={(e) => updateLine( 'instrumentType1', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Instrument number" fullWidth value={lines.instrumentNumber1} onChange={(e) => updateLine( 'instrumentNumber1', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Instrument type" fullWidth value={lines.instrumentType2} onChange={(e) => updateLine( 'instrumentType2', e.target.value)} /></Grid>
+            <Grid item xs={12} md={3}><TextField label="Instrument number" fullWidth value={lines.instrumentNumber2} onChange={(e) => updateLine( 'instrumentNumber2', e.target.value)} /></Grid>
 
-            <Grid item xs={12}><TextField label="Additional information" fullWidth multiline minRows={2} value={line.additionalInformation} onChange={(e) => updateLine(idx, 'additionalInformation', e.target.value)} /></Grid>
-            <Grid item xs={12} md={4}><TextField label="Producer code" fullWidth value={line.producerCode} onChange={(e) => updateLine(idx, 'producerCode', e.target.value)} /></Grid>
+            <Grid item xs={12}><TextField label="Additional information" fullWidth multiline minRows={2} value={lines.additionalInformation} onChange={(e) => updateLine( 'additionalInformation', e.target.value)} /></Grid>
+            <Grid item xs={12} md={4}><TextField label="Producer code" fullWidth value={lines.producerCode} onChange={(e) => updateLine( 'producerCode', e.target.value)} /></Grid>
           </Grid>
         </Paper>
-      ))}
-
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button startIcon={<Add />} onClick={addLine} variant="outlined">Add line</Button>
-      </Box>
+      
 
       <StepActions />
     </Box>
