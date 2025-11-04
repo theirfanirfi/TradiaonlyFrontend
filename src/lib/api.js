@@ -67,6 +67,10 @@ const ProcessAPI = {
     const { data } = await api.get(`/api/process/${processId}/status`);
     return data;
   },
+  async delete(processId){
+        const { data } = await api.delete(`/api/process/${processId}`);
+    return data;
+  },
 };
 
 const DocumentsAPI = {

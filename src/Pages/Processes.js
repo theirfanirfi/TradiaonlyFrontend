@@ -74,7 +74,9 @@ const fetch_processes = async () => {
     }
   };
 
-  const handleDeleteProcess = (processId) => {
+  const handleDeleteProcess = async (processId) => {
+    console.log(processId)
+    await ProcessAPI.delete(processId)
     setProcesses(processes.filter((process) => process.process_id !== processId));
   };
 
