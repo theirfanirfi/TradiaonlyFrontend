@@ -40,6 +40,13 @@ const useFileUpload = (uploadFunction,checkInvoiceStatus, options = {}) => {
         //after each 10 seconds, check the invoice status
         const interval = setInterval(async () => {
           const processStatus = await checkInvoiceStatus();
+          if(!processStatus){
+          setUploadStatus("error");
+          clearInterval(interval);
+          reset();
+          }
+
+
           console.log("Current invoice status:", processStatus);
           if (processStatus.status === "Done") {
             clearInterval(interval);
