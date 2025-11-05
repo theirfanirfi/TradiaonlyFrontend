@@ -172,7 +172,10 @@ async generatePdf(processId) {
  const response = await api.post(`/api/declaration/${processId}/generate-pdf`, {}, {
     responseType: 'blob'  // Important: tells axios to handle response as blob
   });
+
+  console.log(response.data.type)
   
+  if(response.data.type){
   // Get filename from response headers or use default
   const filename = response.headers['content-disposition']
     ?.split('filename=')[1]
@@ -192,6 +195,9 @@ async generatePdf(processId) {
   window.URL.revokeObjectURL(url);
   
   return response.data;
+  }else {
+    return false
+  }
 },
 
 async checkDeclarationStatus(processId){

@@ -17,7 +17,7 @@ import UploadModal from "../components/UploadModal";
 import UploadProgressDialog from "../components/UploadProgressDialog";
 import UploadButton from "../components/UploadButton";
 import useFileUpload from "../hooks/useFileUpload";
-import { ProcessAPI, DocumentsAPI } from "../lib/api";
+import { ProcessAPI, DocumentsAPI, DeclarationAPI } from "../lib/api";
 
 function Process() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -212,6 +212,21 @@ function Process() {
               >
                 Upload Invoices
               </UploadButton>
+              {}
+            <Button
+              onClick={async ()=> {
+                let downloadFile = await DeclarationAPI.generatePdf(processId);
+                if(!downloadFile){
+                  alert('Your declaration is not ready yet. Upload invoices, initiate form filling.')
+                }
+              }}
+              sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  color:"white",
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.dark,
+                  }}}>Download Declaration File
+              </Button>
 
               <Button
               onClick={()=>navigate(`/declaration/import/${processId}`)}
@@ -220,7 +235,8 @@ function Process() {
                   color:"white",
                   "&:hover": {
                     backgroundColor: theme.palette.primary.dark,
-                  }}}>Initiate B650 Form</Button>
+                  }}}>Initiate B650 Form
+              </Button>
             </Box>
 
             <InvoiceList

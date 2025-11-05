@@ -317,7 +317,8 @@ function ImportDeclarationForm() {
           <Button variant="contained" onClick={next}>Next</Button>
         ) : (
           <Button variant="contained" color="primary" onClick={async()=>{
-    const pdfBlob = await DeclarationAPI.generatePdf(processId);
+              await DeclarationAPI.generatePdf(processId);
+              navigate(`/processes/${processId}`)
   
           }}>Finish</Button>
         )}
