@@ -193,6 +193,14 @@ async generatePdf(processId) {
   
   return response.data;
 },
+
+async checkDeclarationStatus(processId){
+    const { data } = await api.get(`/api/declaration/import/${processId}/status`, {
+      headers: { "Content-Type": "application/json" }
+    });
+    console.log(data.status == true, data)
+    return data.status ? true : false;
+}
 };
 
 const AuthAPI = {

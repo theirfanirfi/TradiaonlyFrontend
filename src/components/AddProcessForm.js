@@ -161,7 +161,7 @@ const AddProcessForm = ({ theme, onAddProcess }) => {
               variant="contained"
               sx={{
                 textTransform: "none",
-                backgroundColor: theme.palette.background.paper,
+                backgroundColor: theme.palette.mode === "dark" ? "#5a8cf0" : "#3366cc",
                 "&:hover": {
                   backgroundColor: theme.palette.mode === "dark" ? "#5a8cf0" : "#3366cc",
                 },

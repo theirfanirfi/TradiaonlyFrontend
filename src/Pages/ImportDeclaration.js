@@ -217,6 +217,52 @@ function ImportDeclarationForm() {
 
   }, [processId, isLoading]);
 
+
+  useEffect(() => {
+  let intervalId;
+
+  const checkStatus = async () => {
+    try {
+      const isReady = await DeclarationAPI.checkDeclarationStatus(processId);
+      if (isReady) {
+        setIsLoading(false);
+        clearInterval(intervalId);
+        
+        // Fetch the declaration data once it's ready
+        const declaration = await DeclarationAPI.get(processId);
+        if (Object.keys(declaration.import_declaration_section_a).length > 0) {
+          const mapped = mapSectionAResponseToState(declaration.import_declaration_section_a);
+          setSectionA(mapped);
+        }
+        if (Object.keys(declaration.import_declaration_section_b).length > 0) {
+          const mappedSectionB = mapSectionB(declaration.import_declaration_section_b);
+          setSectionB(mappedSectionB);
+        }
+        if (Object.keys(declaration.import_declaration_section_c).length > 0) {
+          const mappedSectionC = mapSectionC(declaration.import_declaration_section_c);
+          setLines({...mappedSectionC});
+        }
+      }
+    } catch (error) {
+      console.error('Error checking declaration status:', error);
+    }
+  };
+
+  if (isLoading) {
+    // Initial check
+    checkStatus();
+    // Set up polling every 20 seconds
+    intervalId = setInterval(checkStatus, 20000);
+  }
+
+  // Cleanup interval on unmount or when isLoading becomes false
+  return () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  };
+}, [isLoading, processId]); // Dependencies
+
   const saveDraft = async () => {
     if(activeStep == 0){
       let payload = mapImportDeclarationSectionAToApiPayload(sectionA)
