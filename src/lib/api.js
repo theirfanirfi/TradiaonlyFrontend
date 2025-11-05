@@ -168,10 +168,31 @@ const DeclarationAPI = {
     });
     return data;
   },
-  async generatePdf(processId) {
-    const { data } = await api.post(`/api/declaration/${processId}/generate-pdf`, {});
-    return data;
-  },
+async generatePdf(processId) {
+ const response = await api.post(`/api/declaration/${processId}/generate-pdf`, {}, {
+    responseType: 'blob'  // Important: tells axios to handle response as blob
+  });
+  
+  // Get filename from response headers or use default
+  const filename = response.headers['content-disposition']
+    ?.split('filename=')[1]
+    ?.replace(/["']/g, '')
+    || `declaration-${processId}.pdf`;
+
+  // Create download link and trigger
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  
+  // Cleanup
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+  
+  return response.data;
+},
 };
 
 const AuthAPI = {

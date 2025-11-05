@@ -270,8 +270,9 @@ function ImportDeclarationForm() {
         {activeStep < steps.length - 1 ? (
           <Button variant="contained" onClick={next}>Next</Button>
         ) : (
-          <Button variant="contained" color="primary" onClick={()=>{
-            DeclarationAPI.generatePdf(processId)
+          <Button variant="contained" color="primary" onClick={async()=>{
+    const pdfBlob = await DeclarationAPI.generatePdf(processId);
+  
           }}>Finish</Button>
         )}
       </Box>
